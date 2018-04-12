@@ -54,6 +54,57 @@ const subscribe = (state, channelRoot, channelKey = null) => {
     return state
 }
 
+/**
+ * Public mode only
+*/
+const updateChannelRoot = async (state, sidekey = null) => {
+    if (state.channel.mode !== 'public') {
+        console.log('Only available for public mode')
+        return state
+    }
+
+    let consumedAll = false
+    let nextRoot = getRoot(state)
+    let transactionCount = 0
+    let messageCount = 0
+
+    while (!consumedAll) {
+        let address = nextRoot
+        // Fetching
+        const hashes = await pify(iota.api.findTransactions.bind(iota.api)) ({
+            addresses: [address]
+        })
+
+        if (hashes.length == 0) {
+            consumedAll = true
+            break
+        }
+
+        transactionCount += hashes.length
+        messageCount++
+
+        const messagesGen = await txHashesToMessages(hashes)
+        for (let message of messagesGen) {
+            try {
+                // Unmask the message
+                const { payload, next_root } = decode(message, sidekey, nextRoot)
+                nextRoot = next_root
+            } catch (e) {
+                return console.error('failed to parse: ', e)
+            }
+        }
+    }
+
+    let updatedChannel = state.channel
+    updatedChannel.start = messageCount
+    if (Mam.getMamRoot(state.seed, updatedChannel) === nextRoot) {
+        state.channel = updatedChannel
+    } else {
+        console.log('failed to update channel, nextRoot is unexpected')
+    }
+    return state
+}
+
 const changeMode = (state, mode, sidekey) => {
     if (mode !== 'public' && mode !== 'private' && mode !== 'restricted') {
         return console.log('Did not recognise mode!')
@@ -168,6 +219,7 @@ const fetch = async (root, mode, sidekey, callback, rounds = 81) => {
 
     const resp = {}
     resp.nextRoot = nextRoot
+    resp.messageCount = messageCount
     if (!callback) {
       resp.messages = messages
     }
@@ -291,6 +343,7 @@ const setIOTA = (externalIOTA = {}) => (iota = externalIOTA)
 module.exports = {
     init,
     subscribe,
+    updateChannelRoot,
     changeMode,
     create,
     decode,
