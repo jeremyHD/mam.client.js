@@ -167,6 +167,21 @@ const create = (state, message) => {
 // Current root
 const getRoot = state => Mam.getMamRoot(state.seed, state.channel)
 
+const getFirstRoot = state => {
+    const channel = {
+        side_key: null,
+        mode: state.channel.mode,
+        next_root: null,
+        security: state.channel.security,
+        start: 0,
+        count: 1,
+        next_count: 1,
+        index: 0
+    }
+    const root = Mam.getMamRoot(state.seed, channel)
+    return root
+}
+
 const decode = (payload, side_key, root) => {
     const mam = Mam.decodeMessage(payload, side_key, root)
     return mam
@@ -352,6 +367,7 @@ module.exports = {
     attach,
     listen,
     getRoot,
+    getFirstRoot,
     setIOTA,
     setupEnv
 }
