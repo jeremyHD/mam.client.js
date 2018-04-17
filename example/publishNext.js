@@ -14,7 +14,7 @@ const publishNext = async packet => {
     let message = Mam.create(mamState, packetTrytes)
 
     console.time("attach")
-    await Mam.attach(message.payload, message.address)
+    await Mam.attach(message.payload, message.address, 4, 11)
     console.timeEnd("attach")
 
     let firstRoot = Mam.getFirstRoot(mamState)
