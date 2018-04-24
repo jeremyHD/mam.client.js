@@ -36,7 +36,6 @@ const payloadJSON =
         temp: 29.4,
         QA: "PASS",
         timestamp: Date.now(),
-        message: 'non callback'
         componentRoots:[
             "FSDJIASJDOIJWDOPKPOKSOPKDWPOKA",
             "jaoiwjdiojowiajidjoijwaiodjoaj",
