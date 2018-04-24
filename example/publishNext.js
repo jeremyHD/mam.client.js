@@ -21,6 +21,7 @@ const publishNext = async packet => {
     console.time("fetch")
     var resp = await Mam.fetch(firstRoot, 'public')
     console.timeEnd("fetch")
+    console.log("Payload: ")
     for (var i = 0; i < resp.messages.length; i++) {
         console.log(iota.utils.fromTrytes(resp.messages[i]))
     }
@@ -28,10 +29,23 @@ const publishNext = async packet => {
 
 const payloadJSON =
     {
-        id: 100412,
+        id: 14501,
         temp: 29.4,
         QA: "PASS",
-        timestamp: Date.now()
+        timestamp: Date.now(),
+        message: 'non callback'
+        componentRoots:[
+            "FSDJIASJDOIJWDOPKPOKSOPKDWPOKA",
+            "jaoiwjdiojowiajidjoijwaiodjoaj",
+            "DLWOKOvNNDW!@EO)ODNJAOKWEOOAW",
+            "OPEJJD@99d0sa0!SJIJDJWIE)IFFGG",
+            "000000000000000000000000000000",
+            "111111111111111111111111111111",
+            "222222222222222222222222222222",
+            "333333333333333333333333333333",
+            "alotalotalotalotofdatadatadata",
+            "NANANANANANNANANANANANANANNANA",
+        ],
     }
 
 publishNext(payloadJSON)
