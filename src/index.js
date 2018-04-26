@@ -126,10 +126,10 @@ const changeMode = (state, mode, sidekey) => {
  * @param  {object} state
  * @param  {sting} message // Tryte encoded string
  */
-const create = (state, message) => {
+const create = (state, message, nextRoot = null) => {
     const channel = state.channel
     // Interact with MAM Lib
-    const mam = Mam.createMessage(state.seed, message, channel.side_key, channel)
+    const mam = Mam.createMessage(state.seed, message, channel.side_key, channel, nextRoot)
 
     // If the tree is exhausted.
     if (channel.index === channel.count - 1) {
@@ -195,8 +195,13 @@ const fetch = async (root, mode, sidekey, callback, rounds = 81) => {
     let messageCount = 0
 
     while (!consumedAll) {
-        // Apply channel mode
         let address = nextRoot
+        if (address === '999999999999999999999999999999999999999999999999999999999999999999999999999999999') {
+            consumedAll = true
+            break
+        }
+
+        // Apply channel mode
         if (mode === 'private' || mode === 'restricted') {
             address = hash(nextRoot, rounds)
         }

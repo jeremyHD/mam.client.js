@@ -150,7 +150,7 @@ const getMamAddress = (KEY, ROOT) => {
     return ctrits_trits_to_string(address)
 }
 
-const createMessage = (SEED, MESSAGE, SIDE_KEY, CHANNEL) => {
+const createMessage = (SEED, MESSAGE, SIDE_KEY, CHANNEL, NEXT_ROOT) => {
     if (!SIDE_KEY)
         SIDE_KEY = `999999999999999999999999999999999999999999999999999999999999999999999999999999999`
 
@@ -182,7 +182,10 @@ const createMessage = (SEED, MESSAGE, SIDE_KEY, CHANNEL) => {
     let next_root_branch = iota_merkle_branch(next_root_merkle, INDEX)
 
     let root = iota_merkle_slice(root_merkle)
-    let next_root = iota_merkle_slice(next_root_merkle)
+    var next_root = iota_merkle_slice(next_root_merkle)
+    if (NEXT_ROOT) {
+        next_root = string_to_ctrits_trits(NEXT_ROOT)
+    }
 
     let masked_payload = iota_mam_create(
         SEED_trits,
