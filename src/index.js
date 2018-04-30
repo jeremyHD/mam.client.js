@@ -164,6 +164,11 @@ const create = (state, message, nextRoot = null) => {
     }
 }
 
+const createWithJson = (state, payloadJson, nextRoot = null) => {
+    let packetTrytes = iota.utils.toTrytes(JSON.stringify(payloadJson))
+    return create(state, packetTrytes, nextRoot)
+}
+
 // Current root
 const getRoot = state => Mam.getMamRoot(state.seed, state.channel)
 
@@ -366,6 +371,7 @@ module.exports = {
     updateChannelRoot,
     changeMode,
     create,
+    createWithJson,
     decode,
     fetch,
     fetchSingle,
@@ -373,6 +379,7 @@ module.exports = {
     listen,
     getRoot,
     getFirstRoot,
+    keyGen,
     setIOTA,
     setupEnv
 }
