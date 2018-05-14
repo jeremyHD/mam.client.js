@@ -8,7 +8,7 @@ var args = process.argv.slice(2)
 var seedJSON = require('./Seeds.json')
 
 // Initialise MAM State
-let mamState = Mam.init(iota, seedJSON.seed[parseInt(args[0])])
+let mamState = Mam.init(iota, seedJSON.seed[parseInt(args[0])], 1)
 
 
 const publishLast = async (index) => {
