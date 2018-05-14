@@ -18,8 +18,7 @@ const publishLast = async (index) => {
     {
         productID: 11451,
         productName: "ATOI",
-        stage: 1,
-        tempC: 55.4,
+        stage: parseInt(args[1]),
         timestamp: Date.now(),
         errorLog: "",
         componentRoots:[
