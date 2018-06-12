@@ -168,24 +168,29 @@ const createMessage = (SEED, MESSAGE, SIDE_KEY, CHANNEL, NEXT_ROOT) => {
     const HASH_LENGTH = 81
 
     // set up merkle tree
+    console.time('merkle tree creation')
     let root_merkle = iota_merkle_create(SEED_trits, START, COUNT, SECURITY)
-    let next_root_merkle = iota_merkle_create(
-        SEED_trits,
-        NEXT_START,
-        NEXT_COUNT,
-        SECURITY
-    )
-
+    console.timeEnd('merkle tree creation')
+    var next_root
+    if (!NEXT_ROOT) {
+        console.time('next merkle tree creation')
+        let next_root_merkle = iota_merkle_create(
+            SEED_trits,
+            NEXT_START,
+            NEXT_COUNT,
+            SECURITY
+        )
+        console.timeEnd('next merkle tree creation')
+	next_root = iota_merkle_slice(next_root_merkle)
+    } else {
+        next_root = string_to_ctrits_trits(NEXT_ROOT)
+    }
     let root_branch = iota_merkle_branch(root_merkle, INDEX)
     let root_siblings = iota_merkle_siblings(root_branch)
 
-    let next_root_branch = iota_merkle_branch(next_root_merkle, INDEX)
+    //let next_root_branch = iota_merkle_branch(next_root_merkle, INDEX)
 
     let root = iota_merkle_slice(root_merkle)
-    var next_root = iota_merkle_slice(next_root_merkle)
-    if (NEXT_ROOT) {
-        next_root = string_to_ctrits_trits(NEXT_ROOT)
-    }
 
     let masked_payload = iota_mam_create(
         SEED_trits,
@@ -208,9 +213,9 @@ const createMessage = (SEED, MESSAGE, SIDE_KEY, CHANNEL, NEXT_ROOT) => {
     // Clean up memory. Unneccessary for this example script, but should be done when running in a production
     // environment.
     iota_merkle_branch_drop(root_branch)
-    iota_merkle_branch_drop(next_root_branch)
+    //iota_merkle_branch_drop(next_root_branch)
     iota_merkle_drop(root_merkle)
-    iota_merkle_drop(next_root_merkle)
+    //iota_merkle_drop(next_root_merkle)
     ;[
         SEED_trits,
         MESSAGE_trits,
@@ -248,11 +253,28 @@ const decodeMessage = (PAYLOAD, SIDE_KEY, ROOT) => {
     return { payload: unmasked_payload, next_root: unmasked_next_root }
 }
 
+const merkleCreate = (SEED, CHANNEL) => {
+    // MAM settings
+    let SEED_trits = string_to_ctrits_trits(SEED)
+
+    const SECURITY = CHANNEL.security
+    const START = CHANNEL.start
+    const COUNT = CHANNEL.count
+    const INDEX = CHANNEL.index
+
+    let root_merkle = iota_merkle_create(SEED_trits, START, COUNT, SECURITY)
+    let root_branch = iota_merkle_branch(root_merkle, INDEX)
+    let root_siblings = iota_merkle_siblings(root_branch)
+
+    return ctrits_trits_to_string(iota_merkle_slice(root_merkle))
+}
+
 const Mam = {
     decodeMessage,
     createMessage,
     getMamAddress,
-    getMamRoot
+    getMamRoot,
+    merkleCreate
 }
 
 // Feed Mam functions into the main file

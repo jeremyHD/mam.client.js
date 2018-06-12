@@ -9,6 +9,7 @@ var seedJSON = require('./Seeds.json')
 
 // Initialise MAM State
 let mamState = Mam.init(iota, seedJSON.seed[parseInt(args[0])])
+mamState.channel.count = 2
 
 
 const publishLast = async (index) => {
@@ -26,9 +27,13 @@ const publishLast = async (index) => {
         ],
     }
 
+    console.time('total message creation')
     let message = Mam.createWithJson(mamState, payloadJSON, nextRoot)
-
-    Mam.attach(message.payload, message.address, 4, 11)
+    console.timeEnd('total message creation')
+    console.log('Message address: ', message.address)
+    console.time('attach')
+    Mam.attach(message.payload, message.address, 4, 9)
+    console.timeEnd('attach')
 }
 
 publishLast(parseInt(args[1]))

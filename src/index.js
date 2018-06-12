@@ -367,6 +367,10 @@ const keyGen = length => {
     ).join('')
 }
 
+const createMerkleTree = state => {
+    return Mam.merkleCreate(state.seed, state.channel)
+}
+
 const setupEnv = rustBindings => (Mam = rustBindings)
 
 const setIOTA = (externalIOTA = {}) => (iota = externalIOTA)
@@ -386,6 +390,7 @@ module.exports = {
     getRoot,
     getFirstRoot,
     keyGen,
+    createMerkleTree,
     setIOTA,
     setupEnv
 }
