@@ -181,7 +181,7 @@ const createMessage = (SEED, MESSAGE, SIDE_KEY, CHANNEL, NEXT_ROOT) => {
             SECURITY
         )
         console.timeEnd('next merkle tree creation')
-	next_root = iota_merkle_slice(next_root_merkle)
+        next_root = iota_merkle_slice(next_root_merkle)
     } else {
         next_root = string_to_ctrits_trits(NEXT_ROOT)
     }
