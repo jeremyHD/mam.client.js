@@ -131,6 +131,7 @@ const create = (state, message, nextRoot = null) => {
     // Interact with MAM Lib
     const mam = Mam.createMessage(state.seed, message, channel.side_key, channel, nextRoot)
 
+    /*
     // If the tree is exhausted.
     if (channel.index === channel.count - 1) {
         // change start to begining of next tree.
@@ -145,6 +146,7 @@ const create = (state, message, nextRoot = null) => {
     // Advance Channel
     channel.next_root = mam.next_root
     state.channel = channel
+    */
 
     // Generate attachement address
     let address
@@ -160,6 +162,7 @@ const create = (state, message, nextRoot = null) => {
         state,
         payload: mam.payload,
         root: mam.root,
+        next_root: mam.next_root,
         address
     }
 }
@@ -179,8 +182,8 @@ const getFirstRoot = state => {
         next_root: null,
         security: state.channel.security,
         start: 0,
-        count: 1,
-        next_count: 1,
+        count: state.channel.count,
+        next_count: state.channel.next_count,
         index: 0
     }
     const root = Mam.getMamRoot(state.seed, channel)
@@ -225,9 +228,11 @@ const fetch = async (root, mode, sidekey, callback, rounds = 81) => {
         messageCount++
 
         var messagesGen = await txHashesToMessages(hashes)
-	if (messagesGen.length > 1) {
-	    console.log('messages found: ', messagesGen.length, 'on: ', address)
-	}
+        if (messagesGen.length > 1) {
+	        console.log('messages found: ', messagesGen.length, 'on: ', address)
+        } else {
+            console.log('address: ', address)
+        }
         for (var i = 0; i < messagesGen.length; i++) {
             let message = messagesGen[i]
             try {

@@ -168,19 +168,19 @@ const createMessage = (SEED, MESSAGE, SIDE_KEY, CHANNEL, NEXT_ROOT) => {
     const HASH_LENGTH = 81
 
     // set up merkle tree
-    console.time('merkle tree creation')
+    //console.time('merkle tree creation')
     let root_merkle = iota_merkle_create(SEED_trits, START, COUNT, SECURITY)
-    console.timeEnd('merkle tree creation')
+    //console.timeEnd('merkle tree creation')
     var next_root
     if (!NEXT_ROOT) {
-        console.time('next merkle tree creation')
+        //console.time('next merkle tree creation')
         let next_root_merkle = iota_merkle_create(
             SEED_trits,
             NEXT_START,
             NEXT_COUNT,
             SECURITY
         )
-        console.timeEnd('next merkle tree creation')
+        //console.timeEnd('next merkle tree creation')
         next_root = iota_merkle_slice(next_root_merkle)
     } else {
         next_root = string_to_ctrits_trits(NEXT_ROOT)
@@ -263,8 +263,8 @@ const merkleCreate = (SEED, CHANNEL) => {
     const INDEX = CHANNEL.index
 
     let root_merkle = iota_merkle_create(SEED_trits, START, COUNT, SECURITY)
-    let root_branch = iota_merkle_branch(root_merkle, INDEX)
-    let root_siblings = iota_merkle_siblings(root_branch)
+    //let root_branch = iota_merkle_branch(root_merkle, INDEX)
+    //let root_siblings = iota_merkle_siblings(root_branch)
 
     return ctrits_trits_to_string(iota_merkle_slice(root_merkle))
 }

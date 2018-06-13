@@ -12,9 +12,6 @@ let root = args[0]
 const execute = async address => {
     const resp = await Mam.fetchSingle(address, 'public')
     let message = JSON.parse(iota.utils.fromTrytes(resp['payload']))
-    if (message["componentRoots"]) {
-        console.log(message["componentRoots"])
-    }
     console.log(message)
     console.log('next root: ', resp.nextRoot)
 }
