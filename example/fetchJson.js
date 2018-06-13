@@ -10,11 +10,12 @@ let mamState = Mam.init(iota, Mam.keyGen(81), 1)
 let root = args[0]
 
 const execute = async address => {
-    const resp = await Mam.fetch(address, 'public')
-    for (var i = 0; i < resp.messages.length; i++) {
-        let message = JSON.parse(iota.utils.fromTrytes(resp.messages[i]))
-        console.log(message)
+    const resp = await Mam.fetchSingle(address, 'public')
+    let message = JSON.parse(iota.utils.fromTrytes(resp['payload']))
+    if (message["componentRoots"]) {
+        console.log(message["componentRoots"])
     }
+    console.log(message)
     console.log('next root: ', resp.nextRoot)
 }
 
