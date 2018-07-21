@@ -3,8 +3,8 @@ const IOTA = require('iota.lib.js')
 const iota = new IOTA({ provider: 'http://192.168.0.110:14265' })
 const emptyNextRoot = '999999999999999999999999999999999999999999999999999999999999999999999999999999999'
 var args = process.argv.slice(2)
-var seedJSON = require('./Seeds.json')
-//const seedJSON = { seed: [Mam.keyGen(81), Mam.keyGen(81)] }
+//var seedJSON = require('./Seeds.json')
+const seedJSON = { seed: [Mam.keyGen(81), Mam.keyGen(81)] }
 
 // Initialise MAM State
 let mamState = Mam.init(iota, Mam.keyGen(81), 1)
@@ -30,7 +30,6 @@ const publishWithIndex = async (seed_index, channel_index, next_seed_index = nul
         let nextRoot = Mam.createMerkleTree(mamState2)
         console.log('next root: ', nextRoot)
         let componentRoot = Mam.getFirstRoot(mamState)
-        payloadJSON
         message = Mam.createWithJson(mamState, payloadJSON, nextRoot)
     } else {
         message = Mam.createWithJson(mamState, payloadJSON)
@@ -50,14 +49,13 @@ const publishLast = async (seed_index, channel_index) => {
     {
         productID: 11451,
         productName: "ATOI",
-        stage: parseInt(args[1]),
+        stage: channel_index,
         timestamp: Date.now(),
         errorLog: "",
         componentRoots:[
             Mam.getFirstRoot(mamState),
         ],
     }
-
     let message = Mam.createWithJson(mamState, payloadJSON, emptyNextRoot)
     console.log('Message address: ', message.address)
     Mam.attach(message.payload, message.address, 4, 9)
