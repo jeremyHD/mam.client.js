@@ -12,7 +12,7 @@ mamState.channel.count = 2
 mamState.channel.next_count = 2
 
 
-const publishWithIndex = async (seed_index, channel_index, next_seed_index = null) => {
+const publishWithIndex = async (seed, channel_index, next_seed = null) => {
     let payloadJSON = {
         productID: 11451,
         productName: "ATOI",
@@ -20,12 +20,12 @@ const publishWithIndex = async (seed_index, channel_index, next_seed_index = nul
         timestamp: Date.now(),
         errorLog: ""
     }
-    mamState.seed = seedJSON.seed[seed_index]
+    mamState.seed = seed
     mamState.channel.start = channel_index
     var message
     //console.time('total message creation')
-    if (next_seed_index) {
-        let mamState2 = Mam.init(iota, seedJSON.seed[next_seed_index], 1)
+    if (next_seed) {
+        let mamState2 = Mam.init(iota, next_seed, 1)
         mamState2.channel.count = 2
         let nextRoot = Mam.createMerkleTree(mamState2)
         console.log('next root: ', nextRoot)
@@ -35,15 +35,15 @@ const publishWithIndex = async (seed_index, channel_index, next_seed_index = nul
         message = Mam.createWithJson(mamState, payloadJSON)
     }
     //console.timeEnd('total message creation')
-    console.log('Message address: ', message.address)
-    console.log('Next message address: ', message.next_root)
-    //console.time('attach')
+    //console.log('Message address: ', message.address)
+    //console.log('Next message address: ', message.next_root)
+    console.time('attach')
     Mam.attach(message.payload, message.address, 4, 9)
-    //console.timeEnd('attach')
+    console.timeEnd('attach')
 }
 
-const publishLast = async (seed_index, channel_index) => {
-    mamState.seed = seedJSON.seed[seed_index]
+const publishLast = async (seed, channel_index) => {
+    mamState.seed = seed
     mamState.channel.start = channel_index
     let payloadJSON =
     {
@@ -61,8 +61,8 @@ const publishLast = async (seed_index, channel_index) => {
     Mam.attach(message.payload, message.address, 4, 9)
 }
 
-const publishMerge = async (seed_index, channelSeeds) => {
-    mamState.seed = seedJSON.seed[seed_index]
+const publishMerge = async (seed, channelSeeds) => {
+    mamState.seed = seed
     mamState.channel.start = 0
     let mergedChannelRoots = []
     let nextRoot = Mam.getFirstRoot(mamState)
@@ -84,6 +84,6 @@ const publishMerge = async (seed_index, channelSeeds) => {
     Mam.attach(message.payload, message.address, 4, 9)
 }
 
-//publishWithIndex(0, 0)
+publishWithIndex(Mam.keyGen(81), 0)
 //publishLast(1, 4 + mamState.channel.count)
 //publishMerge(1, [[Mam.keyGen(81), 0], [Mam.keyGen(81), 0], [Mam.keyGen(81), 0], [Mam.keyGen(81), 0]])
